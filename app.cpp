@@ -2,12 +2,10 @@
 #include "app.h"
 #include "renderer.h"
 
-App::App(uint32_t width, uint32_t height)
-    : m_width { width }
-    , m_height { height }
+App::App(LONG width, LONG height)
 {
-    InitWindow();
-    m_renderer = new Renderer {};
+    InitWindow(width, height);
+    m_renderer = new Renderer { static_cast<uint32_t>(width), static_cast<uint32_t>(height), hWnd };
 }
 
 App::~App()
@@ -24,11 +22,12 @@ void App::Run()
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
         } else {
+            m_renderer->Render();
         }
     }
 }
 
-void App::InitWindow(void)
+void App::InitWindow(LONG width, LONG height)
 {
     WNDCLASSEXW wcex {};
 
@@ -43,13 +42,12 @@ void App::InitWindow(void)
         exit(EXIT_FAILURE);
     }
 
-    RECT windowRect = { 0, 0, 1280, 720 };
+    RECT windowRect = { 0, 0, width, height };
     ::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, false);
-    const int width = windowRect.right - windowRect.left;
-    const int height = windowRect.bottom - windowRect.top;
+    int windowWidth = windowRect.right - windowRect.left;
+    int windowHeight = windowRect.bottom - windowRect.top;
 
-    hWnd = ::CreateWindow(wcex.lpszClassName, TEXT("renderer"), WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, width, height, nullptr, nullptr, nullptr, nullptr);
+    hWnd = ::CreateWindow(wcex.lpszClassName, TEXT("renderer"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, windowWidth, windowHeight, nullptr, nullptr, nullptr, nullptr);
 
     if (!hWnd) {
         SPDLOG_ERROR("Failed to create window.");

@@ -5,10 +5,44 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="app.cpp" />
     <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="pipeline.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics_common.cpp">
+      <Filter>pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="geometry.cpp" />
+    <ClCompile Include="mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="pipeline.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics_common.h">
+      <Filter>pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="geometry.h" />
+    <ClInclude Include="mesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{338f45ba-a072-4d51-b9f7-f0e895cc5375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pipeline">
+      <UniqueIdentifier>{bce054db-ee89-4e85-9b81-e88d63fd618a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="simpleVS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="simplePS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

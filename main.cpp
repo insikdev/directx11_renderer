@@ -3,8 +3,8 @@
 
 int main(int argc, char** argv)
 {
-    const uint32_t width = 1280;
-    const uint32_t height = 720;
+    LONG width = 1280;
+    LONG height = 720;
 
     App { width, height }.Run();
 

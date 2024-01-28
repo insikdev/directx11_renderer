@@ -4,19 +4,17 @@ class Renderer;
 
 class App {
 public:
-    App(uint32_t width, uint32_t height);
+    App(LONG width, LONG height);
     ~App();
 
 public:
     void Run();
 
 private:
-    void InitWindow(void);
+    void InitWindow(LONG width, LONG height);
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 private:
     HWND hWnd;
-    uint32_t m_width;
-    uint32_t m_height;
     Renderer* m_renderer;
 };
