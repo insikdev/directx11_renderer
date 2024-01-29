@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <iostream>
+#include <algorithm>
 
 // library
 #include <imgui.h>

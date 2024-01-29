@@ -43,13 +43,17 @@ Renderer::~Renderer()
 
 void Renderer::Update(void)
 {
+    float dt = ImGui::GetIO().DeltaTime;
+
+    camera.Update(dt);
+
     m_commonConstantData.view = camera.GetView();
     m_commonConstantData.proj = camera.GetProj();
 
     Utils::UpdateConstantBuffer(m_context, m_commonConstantData, m_commonConstantBuffer);
 
     for (Mesh* m : m_meshes) {
-        m->Update(m_context, ImGui::GetIO().DeltaTime);
+        m->Update(m_context, dt);
     }
 }
 

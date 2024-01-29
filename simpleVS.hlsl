@@ -13,7 +13,7 @@ PixelInput main(VertexInput input)
     pos = mul(pos, proj);
     
     output.pos = pos;
-    output.normalWorld = mul(float4(input.normal, 0.0), worldInverseTranspose).xyz;
+    output.normalWorld = normalize(mul(float4(input.normal, 0.0), worldInverseTranspose).xyz);
     output.uv = input.uv;
     
     return output;
