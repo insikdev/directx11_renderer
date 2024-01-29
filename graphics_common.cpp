@@ -27,7 +27,6 @@ void Graphics::Initialize(ComPtr<ID3D11Device>& device)
     InitShader(device);
     InitRS(device);
 
-    //
     simplePipeline.VS = simple_VS;
     simplePipeline.PS = simple_PS;
     simplePipeline.inputLayout = inputLayout;

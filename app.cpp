@@ -22,6 +22,7 @@ void App::Run()
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
         } else {
+            m_renderer->Update();
             m_renderer->Render();
         }
     }

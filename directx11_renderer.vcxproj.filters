@@ -14,6 +14,7 @@
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="geometry.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="camera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
@@ -44,5 +46,10 @@
     <FxCompile Include="simplePS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="common.hlsli">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

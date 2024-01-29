@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 class Pipeline;
 class Mesh;
 
@@ -9,6 +10,7 @@ public:
     ~Renderer();
 
 public:
+    void Update(void);
     void Render(void);
 
 private:
@@ -26,5 +28,10 @@ private:
     ComPtr<ID3D11DeviceContext> m_context;
     ComPtr<ID3D11RenderTargetView> m_renderTargetView;
     D3D11_VIEWPORT m_viewport;
+
+private:
     Mesh* mesh;
+    ComPtr<ID3D11Buffer> m_commonConstantBuffer;
+    CommonConstant m_commonConstantData {};
+    Camera camera;
 };
