@@ -10,9 +10,12 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <exception>
 
 // library
-#include <spdlog/spdlog.h>
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
 
 // DirectX
 #pragma comment(lib, "d3d11.lib")
@@ -27,11 +30,15 @@
 using namespace Microsoft::WRL;
 using namespace DirectX::SimpleMath;
 
-#define CHECK(hr, errorMsg)     \
-    if (FAILED(hr)) {           \
-        SPDLOG_ERROR(errorMsg); \
-        exit(EXIT_FAILURE);     \
+namespace DX {
+inline void ThrowIfFailed(HRESULT hr)
+{
+    if (FAILED(hr)) {
+        // Set a breakpoint on this line to catch DirectX API errors
+        throw std::exception();
     }
+}
+}
 
 struct Vertex {
     Vector3 pos;

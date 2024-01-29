@@ -15,6 +15,7 @@
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="geometry.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="gui.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
@@ -57,5 +59,6 @@
     <None Include="common.hlsli">
       <Filter>shaders</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

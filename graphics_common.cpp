@@ -50,12 +50,10 @@ void InitShader(ComPtr<ID3D11Device>& device)
 {
     using namespace Graphics;
 
-    HRESULT hr;
     ComPtr<ID3DBlob> blob;
 
     Utils::CompileShaderFromFile(TEXT("simpleVS.hlsl"), "vs_5_0", blob);
-    hr = device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, simple_VS.GetAddressOf());
-    CHECK(hr, "Failed to compile vertex shader.");
+    DX::ThrowIfFailed(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, simple_VS.GetAddressOf()));
 
     std::vector<D3D11_INPUT_ELEMENT_DESC> layout {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -63,72 +61,59 @@ void InitShader(ComPtr<ID3D11Device>& device)
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv), D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    hr = device->CreateInputLayout(layout.data(), static_cast<UINT>(layout.size()), blob->GetBufferPointer(), blob->GetBufferSize(), pos_normal_uv_IL.GetAddressOf());
-    CHECK(hr, "Failed to compile input layout.");
+    DX::ThrowIfFailed(device->CreateInputLayout(layout.data(), static_cast<UINT>(layout.size()), blob->GetBufferPointer(), blob->GetBufferSize(), pos_normal_uv_IL.GetAddressOf()));
 
     blob.Reset();
-    Utils::CompileShaderFromFile(L"simplePS.hlsl", "ps_5_0", blob);
-    hr = device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, simple_PS.GetAddressOf());
-    CHECK(hr, "Failed to compile pixel shader.");
+    Utils::CompileShaderFromFile(TEXT("simplePS.hlsl"), "ps_5_0", blob);
+    DX::ThrowIfFailed(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, simple_PS.GetAddressOf()));
 
     blob.Reset();
-    Utils::CompileShaderFromFile(L"skyboxVS.hlsl", "vs_5_0", blob);
-    hr = device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, skybox_VS.GetAddressOf());
-    CHECK(hr, "Failed to compile vertex shader");
+    Utils::CompileShaderFromFile(TEXT("skyboxVS.hlsl"), "vs_5_0", blob);
+    DX::ThrowIfFailed(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, skybox_VS.GetAddressOf()));
 
     blob.Reset();
-    Utils::CompileShaderFromFile(L"skyboxPS.hlsl", "ps_5_0", blob);
-    hr = device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, skybox_PS.GetAddressOf());
-    CHECK(hr, "Failed to compile pixel shader");
+    Utils::CompileShaderFromFile(TEXT("skyboxPS.hlsl"), "ps_5_0", blob);
+    DX::ThrowIfFailed(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, skybox_PS.GetAddressOf()));
 }
 
 void InitRasterizerState(ComPtr<ID3D11Device>& device)
 {
     using namespace Graphics;
 
-    HRESULT hr;
     D3D11_RASTERIZER_DESC desc {};
 
     desc.FillMode = D3D11_FILL_SOLID;
     desc.CullMode = D3D11_CULL_BACK;
     desc.FrontCounterClockwise = false;
-    hr = device->CreateRasterizerState(&desc, solid_cullBack_RS.GetAddressOf());
-    CHECK(hr, "Failed to create rasterizer state.");
+    DX::ThrowIfFailed(device->CreateRasterizerState(&desc, solid_cullBack_RS.GetAddressOf()));
 
     desc.FillMode = D3D11_FILL_WIREFRAME;
-    hr = device->CreateRasterizerState(&desc, wire_cullBack_RS.GetAddressOf());
-    CHECK(hr, "Failed to create rasterizer state.");
+    DX::ThrowIfFailed(device->CreateRasterizerState(&desc, wire_cullBack_RS.GetAddressOf()));
 
     desc.FillMode = D3D11_FILL_SOLID;
     desc.CullMode = D3D11_CULL_NONE;
-    hr = device->CreateRasterizerState(&desc, solid_cullNone_RS.GetAddressOf());
-    CHECK(hr, "Failed to create rasterizer state.");
+    DX::ThrowIfFailed(device->CreateRasterizerState(&desc, solid_cullNone_RS.GetAddressOf()));
 }
 
 void InitDepthStencilState(ComPtr<ID3D11Device>& device)
 {
     using namespace Graphics;
-    HRESULT hr;
 
     D3D11_DEPTH_STENCIL_DESC desc {};
     desc.DepthEnable = true;
     desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     desc.DepthFunc = D3D11_COMPARISON_LESS;
     desc.StencilEnable = false;
-
-    hr = device->CreateDepthStencilState(&desc, simpleDS.GetAddressOf());
-    CHECK(hr, "Failed to create depth stencil state.");
+    DX::ThrowIfFailed(device->CreateDepthStencilState(&desc, simpleDS.GetAddressOf()));
 
     desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = device->CreateDepthStencilState(&desc, skyboxDS.GetAddressOf());
-    CHECK(hr, "Failed to create depth stencil state.");
+    DX::ThrowIfFailed(device->CreateDepthStencilState(&desc, skyboxDS.GetAddressOf()));
 }
 
 void InitSamplerState(ComPtr<ID3D11Device>& device)
 {
     using namespace Graphics;
 
-    HRESULT hr;
     D3D11_SAMPLER_DESC desc {};
     desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -138,8 +123,7 @@ void InitSamplerState(ComPtr<ID3D11Device>& device)
     desc.MinLOD = 0;
     desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-    hr = device->CreateSamplerState(&desc, linear_wrap_SS.GetAddressOf());
-    CHECK(hr, "Failed to create sampler state.");
+    DX::ThrowIfFailed(device->CreateSamplerState(&desc, linear_wrap_SS.GetAddressOf()));
 
     samplers.push_back(linear_wrap_SS.Get());
 }

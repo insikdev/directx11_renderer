@@ -3,6 +3,7 @@
 #include "camera.h"
 class Pipeline;
 class Mesh;
+class Gui;
 
 class Renderer {
 public:
@@ -31,6 +32,7 @@ private:
     ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     D3D11_VIEWPORT m_viewport;
     float m_clearColor[4] { 1.0f, 1.0f, 1.0f, 1.0f };
+    Gui* m_gui;
 
 private:
     std::vector<Mesh*> m_meshes;

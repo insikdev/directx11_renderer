@@ -19,7 +19,7 @@ void Mesh::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 
     Utils::UpdateConstantBuffer(context, m_constantData, m_constantBuffer);
 
-    angle += 0.02f;
+    angle += dt;
 }
 
 void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)

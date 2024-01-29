@@ -5,6 +5,7 @@
 #include "geometry.h"
 #include "mesh.h"
 #include "utils.h"
+#include "gui.h"
 
 Renderer::Renderer(uint32_t width, uint32_t height, HWND hWnd)
     : m_width { width }
@@ -17,6 +18,7 @@ Renderer::Renderer(uint32_t width, uint32_t height, HWND hWnd)
     CreateDepthStencilView();
     SetViewport();
 
+    m_gui = new Gui { hWnd, m_device.Get(), m_context.Get() };
     Graphics::Initialize(m_device);
 
     Mesh* cube = new Mesh { m_device, Geometry::CreateCube() };
@@ -36,6 +38,7 @@ Renderer::~Renderer()
     }
 
     delete m_skybox;
+    delete m_gui;
 }
 
 void Renderer::Update(void)
@@ -46,7 +49,7 @@ void Renderer::Update(void)
     Utils::UpdateConstantBuffer(m_context, m_commonConstantData, m_commonConstantBuffer);
 
     for (Mesh* m : m_meshes) {
-        m->Update(m_context, 0);
+        m->Update(m_context, ImGui::GetIO().DeltaTime);
     }
 }
 
@@ -74,6 +77,8 @@ void Renderer::Render(void)
 
     SetPipeline(Graphics::skyboxPipeline);
     m_skybox->Render(m_context);
+
+    m_gui->Render();
 
     m_swapChain->Present(1, 0);
 }
@@ -107,7 +112,7 @@ void Renderer::CreateDeviceAndSwapChain()
 
     D3D_FEATURE_LEVEL level;
 
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(
+    DX::ThrowIfFailed(::D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
@@ -119,21 +124,15 @@ void Renderer::CreateDeviceAndSwapChain()
         m_swapChain.GetAddressOf(),
         m_device.GetAddressOf(),
         &level,
-        m_context.GetAddressOf());
-
-    CHECK(hr, "Failed to create device and swap chain");
+        m_context.GetAddressOf()));
 }
 
 void Renderer::CreateRenderTargetView(void)
 {
-    HRESULT hr;
-
     ComPtr<ID3D11Texture2D> backBuffer;
-    hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
-    CHECK(hr, "Failed to get back buffer");
+    DX::ThrowIfFailed(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf()));
 
-    m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-    CHECK(hr, "Failed to create render target view");
+    DX::ThrowIfFailed(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf()));
 }
 
 void Renderer::CreateDepthStencilView(void)
@@ -156,8 +155,8 @@ void Renderer::CreateDepthStencilView(void)
 
     ComPtr<ID3D11Texture2D> depthStencilBuffer;
 
-    m_device->CreateTexture2D(&desc, 0, depthStencilBuffer.GetAddressOf());
-    m_device->CreateDepthStencilView(depthStencilBuffer.Get(), NULL, m_depthStencilView.GetAddressOf());
+    DX::ThrowIfFailed(m_device->CreateTexture2D(&desc, 0, depthStencilBuffer.GetAddressOf()));
+    DX::ThrowIfFailed(m_device->CreateDepthStencilView(depthStencilBuffer.Get(), NULL, m_depthStencilView.GetAddressOf()));
 }
 
 void Renderer::SetViewport(void)

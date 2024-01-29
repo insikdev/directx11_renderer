@@ -2,6 +2,8 @@
 #include "app.h"
 #include "renderer.h"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 App::App(LONG width, LONG height)
 {
     InitWindow(width, height);
@@ -39,8 +41,7 @@ void App::InitWindow(LONG width, LONG height)
     wcex.lpszClassName = TEXT("DirectX11");
 
     if (::RegisterClassEx(&wcex) == 0) {
-        SPDLOG_ERROR("Failed to register class.");
-        exit(EXIT_FAILURE);
+        throw std::exception();
     }
 
     RECT windowRect = { 0, 0, width, height };
@@ -51,8 +52,7 @@ void App::InitWindow(LONG width, LONG height)
     hWnd = ::CreateWindow(wcex.lpszClassName, TEXT("renderer"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, windowWidth, windowHeight, nullptr, nullptr, nullptr, nullptr);
 
     if (!hWnd) {
-        SPDLOG_ERROR("Failed to create window.");
-        exit(EXIT_FAILURE);
+        throw std::exception();
     }
 
     ::ShowWindow(hWnd, SW_SHOW);
@@ -61,6 +61,10 @@ void App::InitWindow(LONG width, LONG height)
 
 LRESULT App::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
+        return true;
+    }
+
     switch (message) {
     case WM_DESTROY:
         ::PostQuitMessage(0);

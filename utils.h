@@ -29,8 +29,7 @@ inline void Utils::CreateConstantBuffer(ComPtr<ID3D11Device>& device, const T& c
     D3D11_SUBRESOURCE_DATA data {};
     data.pSysMem = &constantData;
 
-    HRESULT hr = device->CreateBuffer(&desc, &data, buffer.GetAddressOf());
-    CHECK(hr, "Failed to create constant buffer.");
+    DX::ThrowIfFailed(device->CreateBuffer(&desc, &data, buffer.GetAddressOf()));
 }
 
 template <typename T>
