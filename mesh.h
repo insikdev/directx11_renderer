@@ -6,6 +6,7 @@ public:
     ~Mesh() = default;
 
 public:
+    void Update(ComPtr<ID3D11DeviceContext>& context, float dt);
     void Render(ComPtr<ID3D11DeviceContext>& context);
 
 private:

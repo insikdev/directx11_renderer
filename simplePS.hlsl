@@ -1,4 +1,9 @@
-float4 main() : SV_TARGET
+#include "common.hlsli"
+
+Texture2D texture0 : register(t0);
+SamplerState sampler0 : register(s0);
+
+float4 main(PixelInput input) : SV_TARGET
 {
-    return float4(0.0f, 1.0f, 1.0f, 1.0f);
+    return texture0.Sample(sampler0, input.uv);
 }

@@ -1,6 +1,6 @@
 #include "common.hlsli"
 
-PixelInput main(VertexInput input) : SV_POSITION
+PixelInput main(VertexInput input)
 {
     PixelInput output;
     
@@ -10,6 +10,7 @@ PixelInput main(VertexInput input) : SV_POSITION
     pos = mul(pos, proj);
     
     output.pos = pos;
+    output.uv = input.uv;
     
     return output;
 }

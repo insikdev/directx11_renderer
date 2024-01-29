@@ -8,6 +8,11 @@ public:
 
     template <typename T>
     static void CreateConstantBuffer(ComPtr<ID3D11Device>& device, const T& constantData, ComPtr<ID3D11Buffer>& buffer);
+
+    template <typename T>
+    static void UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context, const T& constantData, ComPtr<ID3D11Buffer>& buffer);
+
+    static void CreateTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view);
 };
 
 template <typename T>
@@ -25,4 +30,13 @@ inline void Utils::CreateConstantBuffer(ComPtr<ID3D11Device>& device, const T& c
 
     HRESULT hr = device->CreateBuffer(&desc, &data, buffer.GetAddressOf());
     CHECK(hr, "Failed to create constant buffer.");
+}
+
+template <typename T>
+inline void Utils::UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context, const T& constantData, ComPtr<ID3D11Buffer>& buffer)
+{
+    D3D11_MAPPED_SUBRESOURCE ms {};
+    context->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
+    memcpy(ms.pData, &constantData, sizeof(T));
+    context->Unmap(buffer.Get(), 0);
 }

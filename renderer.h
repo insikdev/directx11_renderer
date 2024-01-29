@@ -28,10 +28,14 @@ private:
     ComPtr<ID3D11DeviceContext> m_context;
     ComPtr<ID3D11RenderTargetView> m_renderTargetView;
     D3D11_VIEWPORT m_viewport;
+    float m_clearColor[4] { 0.0f, 0.0f, 0.0f, 0.0f };
 
 private:
-    Mesh* mesh;
+    std::vector<Mesh*> m_meshes;
+    ComPtr<ID3D11ShaderResourceView> m_SRV;
     ComPtr<ID3D11Buffer> m_commonConstantBuffer;
     CommonConstant m_commonConstantData {};
     Camera camera;
+
+    ComPtr<ID3D11SamplerState> m_sampler;
 };

@@ -53,3 +53,9 @@ void Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<ui
     HRESULT hr = device->CreateBuffer(&desc, &data, buffer.GetAddressOf());
     CHECK(hr, "Failed to create index buffer.");
 }
+
+void Utils::CreateTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view)
+{
+    HRESULT hr = DirectX::CreateWICTextureFromFile(device.Get(), path.c_str(), nullptr, view.GetAddressOf());
+    CHECK(hr, "Failed to create texture");
+}

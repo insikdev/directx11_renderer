@@ -10,7 +10,7 @@ public:
     Matrix GetProj(void);
 
 public:
-    Vector3 cameraPos { 5.0f, 5.0f, -5.0f };
+    Vector3 cameraPos { 3.0f, 1.5f, -3.0f };
     float m_aspect;
     float m_fov;
     float m_near { 0.1f };
