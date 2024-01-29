@@ -3,19 +3,12 @@
 class Pipeline;
 
 namespace Graphics {
-// shader
-extern ComPtr<ID3D11VertexShader> simple_VS;
-extern ComPtr<ID3D11PixelShader> simple_PS;
+// sampler states
+extern std::vector<ID3D11SamplerState*> samplers;
 
-// input layout
-extern ComPtr<ID3D11InputLayout> inputLayout;
-
-// rasterizer state
-extern ComPtr<ID3D11RasterizerState> solid_back_cw_RS;
-extern ComPtr<ID3D11RasterizerState> solid_back_ccw_RS;
-extern ComPtr<ID3D11RasterizerState> wire_back_cw_RS;
-
+// pipeline
 extern Pipeline simplePipeline;
+extern Pipeline skyboxPipeline;
 
 void Initialize(ComPtr<ID3D11Device>& device);
 }

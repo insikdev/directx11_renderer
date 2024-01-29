@@ -46,6 +46,12 @@
     <FxCompile Include="simplePS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
+    <FxCompile Include="skyboxVS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="skyboxPS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="common.hlsli">

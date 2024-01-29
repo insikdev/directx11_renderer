@@ -13,6 +13,7 @@ public:
     static void UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context, const T& constantData, ComPtr<ID3D11Buffer>& buffer);
 
     static void CreateTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view);
+    static void CreateDDSTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view);
 };
 
 template <typename T>

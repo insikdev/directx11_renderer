@@ -17,4 +17,7 @@ private:
     UINT indexCount;
     UINT stride { sizeof(Vertex) };
     UINT offset { 0 };
+
+public: // material
+    ComPtr<ID3D11ShaderResourceView> diffuseSRV;
 };

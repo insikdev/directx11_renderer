@@ -19,7 +19,7 @@ void Utils::CompileShaderFromFile(const std::wstring& path, const std::string& v
         blob.GetAddressOf(),
         nullptr);
 
-    CHECK(hr, "Failed to complie shader");
+    CHECK(hr, "Failed to complie shader.");
 }
 
 void Utils::CreateVertexBuffer(ComPtr<ID3D11Device>& device, const std::vector<Vertex>& vertices, ComPtr<ID3D11Buffer>& buffer)
@@ -57,5 +57,27 @@ void Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<ui
 void Utils::CreateTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view)
 {
     HRESULT hr = DirectX::CreateWICTextureFromFile(device.Get(), path.c_str(), nullptr, view.GetAddressOf());
-    CHECK(hr, "Failed to create texture");
+    CHECK(hr, "Failed to create texture.");
+}
+
+void Utils::CreateDDSTextureFromFile(ComPtr<ID3D11Device>& device, const std::wstring& path, ComPtr<ID3D11ShaderResourceView>& view)
+{
+    ComPtr<ID3D11Texture2D> texture;
+
+    UINT miscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+    HRESULT hr = DirectX::CreateDDSTextureFromFileEx(
+        device.Get(),
+        path.c_str(),
+        0,
+        D3D11_USAGE_DEFAULT,
+        D3D11_BIND_SHADER_RESOURCE,
+        0,
+        miscFlags,
+        DirectX::DDS_LOADER_FLAGS(false),
+        (ID3D11Resource**)texture.GetAddressOf(),
+        view.GetAddressOf(),
+        NULL);
+
+    CHECK(hr, "Failed to create DDS texture.");
 }

@@ -21,6 +21,7 @@
 #include <d3dcompiler.h>
 #include <directxtk/SimpleMath.h>
 #include <directxtk/WICTextureLoader.h>
+#include <directxtk/DDSTextureLoader.h>
 #include <wrl/client.h>
 
 using namespace Microsoft::WRL;
@@ -34,6 +35,7 @@ using namespace DirectX::SimpleMath;
 
 struct Vertex {
     Vector3 pos;
+    Vector3 normal;
     Vector2 uv;
 };
 
@@ -49,4 +51,5 @@ struct CommonConstant {
 
 struct MeshConstant {
     Matrix world;
+    Matrix worldInverseTranspose;
 };

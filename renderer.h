@@ -16,6 +16,7 @@ public:
 private:
     void CreateDeviceAndSwapChain(void);
     void CreateRenderTargetView(void);
+    void CreateDepthStencilView(void);
     void SetViewport(void);
     void SetPipeline(const Pipeline& pipeline);
 
@@ -27,15 +28,17 @@ private:
     ComPtr<IDXGISwapChain> m_swapChain;
     ComPtr<ID3D11DeviceContext> m_context;
     ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+    ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     D3D11_VIEWPORT m_viewport;
-    float m_clearColor[4] { 0.0f, 0.0f, 0.0f, 0.0f };
+    float m_clearColor[4] { 1.0f, 1.0f, 1.0f, 1.0f };
 
 private:
     std::vector<Mesh*> m_meshes;
-    ComPtr<ID3D11ShaderResourceView> m_SRV;
     ComPtr<ID3D11Buffer> m_commonConstantBuffer;
     CommonConstant m_commonConstantData {};
     Camera camera;
 
-    ComPtr<ID3D11SamplerState> m_sampler;
+private:
+    Mesh* m_skybox;
+    ComPtr<ID3D11ShaderResourceView> m_envDiffuse;
 };

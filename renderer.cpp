@@ -14,35 +14,19 @@ Renderer::Renderer(uint32_t width, uint32_t height, HWND hWnd)
 {
     CreateDeviceAndSwapChain();
     CreateRenderTargetView();
+    CreateDepthStencilView();
     SetViewport();
 
     Graphics::Initialize(m_device);
-    SetPipeline(Graphics::simplePipeline);
 
     Mesh* cube = new Mesh { m_device, Geometry::CreateCube() };
-
+    Utils::CreateTextureFromFile(m_device, TEXT("C:/assets/images/crate2_diffuse.png"), cube->diffuseSRV);
     m_meshes.push_back(cube);
 
     Utils::CreateConstantBuffer<CommonConstant>(m_device, m_commonConstantData, m_commonConstantBuffer);
-    Utils::CreateTextureFromFile(m_device, TEXT("C:/assets/images/crate2_diffuse.png"), m_SRV);
 
-    D3D11_SAMPLER_DESC desc;
-    ZeroMemory(&desc, sizeof(desc));
-    desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    desc.BorderColor[0] = 1;
-    desc.BorderColor[1] = 0;
-    desc.BorderColor[2] = 0;
-    desc.BorderColor[3] = 1;
-    desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    desc.MaxAnisotropy = 16;
-    desc.MaxLOD = FLT_MAX;
-    desc.MinLOD = FLT_MIN;
-    desc.MipLODBias = 0.0f;
-
-    m_device->CreateSamplerState(&desc, m_sampler.GetAddressOf());
+    m_skybox = new Mesh { m_device, Geometry::CreateCube() };
+    Utils::CreateDDSTextureFromFile(m_device, TEXT("C:/assets/cubemap/skybox.dds"), m_envDiffuse);
 }
 
 Renderer::~Renderer()
@@ -50,6 +34,8 @@ Renderer::~Renderer()
     for (Mesh* m : m_meshes) {
         delete m;
     }
+
+    delete m_skybox;
 }
 
 void Renderer::Update(void)
@@ -66,18 +52,28 @@ void Renderer::Update(void)
 
 void Renderer::Render(void)
 {
-    m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
+    SetPipeline(Graphics::simplePipeline);
+
     m_context->ClearRenderTargetView(m_renderTargetView.Get(), m_clearColor);
+    m_context->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+
     m_context->RSSetViewports(1, &m_viewport);
 
     m_context->VSSetConstantBuffers(1, 1, m_commonConstantBuffer.GetAddressOf());
 
-    m_context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
-    m_context->PSSetShaderResources(0, 1, m_SRV.GetAddressOf());
+    m_context->PSSetSamplers(0, static_cast<UINT>(Graphics::samplers.size()), Graphics::samplers.data());
+
+    std::vector<ID3D11ShaderResourceView*> commonSRVs = { m_envDiffuse.Get() };
+
+    m_context->PSSetShaderResources(10, static_cast<UINT>(commonSRVs.size()), commonSRVs.data());
 
     for (Mesh* m : m_meshes) {
         m->Render(m_context);
     }
+
+    SetPipeline(Graphics::skyboxPipeline);
+    m_skybox->Render(m_context);
 
     m_swapChain->Present(1, 0);
 }
@@ -140,6 +136,30 @@ void Renderer::CreateRenderTargetView(void)
     CHECK(hr, "Failed to create render target view");
 }
 
+void Renderer::CreateDepthStencilView(void)
+{
+    DXGI_SAMPLE_DESC sampleDesc {};
+    sampleDesc.Count = 1;
+    sampleDesc.Quality = 0;
+
+    D3D11_TEXTURE2D_DESC desc {};
+    desc.Width = m_width;
+    desc.Height = m_height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc.SampleDesc = sampleDesc;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+
+    ComPtr<ID3D11Texture2D> depthStencilBuffer;
+
+    m_device->CreateTexture2D(&desc, 0, depthStencilBuffer.GetAddressOf());
+    m_device->CreateDepthStencilView(depthStencilBuffer.Get(), NULL, m_depthStencilView.GetAddressOf());
+}
+
 void Renderer::SetViewport(void)
 {
     m_viewport.TopLeftX = 0;
@@ -152,12 +172,19 @@ void Renderer::SetViewport(void)
 
 void Renderer::SetPipeline(const Pipeline& pipeline)
 {
+    // IA
     m_context->IASetInputLayout(pipeline.inputLayout.Get());
     m_context->IASetPrimitiveTopology(pipeline.primitiveTopology);
 
+    // VS
     m_context->VSSetShader(pipeline.VS.Get(), nullptr, 0);
 
+    // RS
     m_context->RSSetState(pipeline.rasterizerState.Get());
 
+    // PS
     m_context->PSSetShader(pipeline.PS.Get(), nullptr, 0);
+
+    // OM
+    m_context->OMSetDepthStencilState(pipeline.depthStencilState.Get(), 0);
 }
